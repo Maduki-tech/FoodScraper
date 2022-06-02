@@ -1,6 +1,5 @@
 import axios from "axios";
 import cheerio from "cheerio";
-import { children } from "cheerio/lib/api/traversing";
 import pretty from "pretty";
 
 const URL =
@@ -19,21 +18,20 @@ async function getDate() {
         const ingredients = $(".table-header tbody tr ");
         const table: object[] = [];
 
-        ingredients.each((idx, ele) => {
+        ingredients.each((_, ele) => {
 			const food = <List>{}
 
 			let menge = $(ele).children(".td-left").children("span").text();
-			let first = food.menge?.trim().split(' ')[1]
-			let last = food.menge?.trim().split(' ').pop()
-            food.menge = menge
+			// weird format thats why this slicing
+			let first = menge?.trim().split(' ')[0];
+			let last = menge?.trim().split(' ').pop();
+
+            food.menge = first + ' ' + last
             food.zutat = $(ele).children(".td-right").children("span").text();
 
-			console.log(first + ' ' + last)
             table.push(food);
         });
-		// console.table(table)
-		// console.dir(table)
-        // console.dir(ingredients.text());
+		console.table(table)
     } catch (err) {
         console.error(err);
     }
